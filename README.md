@@ -1,30 +1,63 @@
-# Cloaksocks (Shadowsocks over Cloak on Docker)
-**Cloak** is a universal pluggable transport that cryptographically obfuscates proxy traffic as legitimate HTTPS traffic, disguises the proxy server as a normal web server, multiplexes traffic through a fixed amount of TCP connections and provides multi-user usage control.
+# Cloaksocks-docker
+is a server-side Docker build designed to be installed on Linux servers. It combines the Shadowsocks server with the Cloak server to bypass web censorship, providing secure and anonymous Internet access by bypassing blockers and filters.
 
-**Cloaksocks** consists of scripts and Dockerfiles to enhance and simplify Shadowsocks/Cloak usage.
+**Cloaksocks-docker** simplifies Shadowsocks/Cloak usage with scripts and Dockerfiles, using two Docker containers:
+
+- **Shadowsocks**: A high-speed tunnel proxy facilitating firewall circumvention.
+- **Cloak**: A versatile pluggable transport encrypting proxy traffic to mimic legitimate HTTPS traffic, camouflaging the proxy server as a regular web server. It multiplexes traffic through a fixed TCP connection pool and offers multi-user usage control.
+Both containers simultaneously listen for client connections, enabling connections with and without the cloak plugin.
+
+This build supports installation on multiple distributions, including **Ubuntu**, **Debian**, **CentOS**, and **Arch** Linux.
+Once installed on a server located in a censorship-free region, you can connect to it using various client applications:
+
+- [**Shadowsocks**](https://f-droid.org/en/packages/com.github.shadowsocks/index.html.en) app with [**Cloak**](https://apt.izzysoft.de/fdroid/index/apk/com.github.shadowsocks.plugin.ck_client) plugin for Android,
+- [**Potatso**](https://apps.apple.com/us/app/potatso/id1239860606) app for iOS devices (free, no cloak support), [**Shadowrocket**](https://apps.apple.com/us/app/shadowrocket/id932747118) app (paid, supports cloak),
+- [**Shadowsocks-electron**](https://github.com/nojsja/shadowsocks-electron/releases) app for Linux (no cloak support),
+- [**ShadowsocksX-NG**](https://github.com/shadowsocks/ShadowsocksX-NG/releases) and [**Shadowsocks**](https://apps.apple.com/gb/app/shadowsocks/id1295053131) apps for MacOS, 
+- [**Shadowsocks-windows**](https://github.com/HirbodBehnam/Shadowsocks-Cloak-Installer/blob/master/README.MD#windows) app with cloak plugin for Windows.
+
+Cloak plugin support is not available for some operating systems, clients can connect directly to the Shadowsocks server on the port selected during installation.
 
 
 ![Made with](https://img.shields.io/badge/Made%20with-Bash%2FDocker-red)
+![ShadowSocks version](https://snapcraft.io/shadowsocks-rust/badge.svg)
 ![Cloak version](https://img.shields.io/badge/Cloak_version-2.6.0-blue)
-![ShadowSocks version](https://img.shields.io/badge/ShadowSocks_version-0.1.5-blue)
 ![Dockerfile](https://img.shields.io/badge/Dockerfile-Ready-brightgreen)
 ![Docker Compose](https://img.shields.io/badge/Docker_Compose-Ready-brightgreen)
 ![Docker Build](https://img.shields.io/badge/Docker_Build-Automatic-brightgreen)
 
+![изображение](https://github.com/cloaksocks/cloaksocks-docker/assets/157986562/d7b437f0-547e-42e5-b68f-c852bef4a9e1)
+
+
 # How to utilize
 **You have many options:**
-### Use the shell script
+## Use the shell script
 Using `Cloaksocks.sh` is the recommended action:
 
 ```bash
+git clone https://github.com/cloaksocks/cloaksocks-docker
+cd cloaksocks-docker
 chmod +x Cloaksocks.sh
-./Cloaksocks.sh
+sudo ./Cloaksocks.sh
 ```
 
-Then follow the instructions. Fast and Simple.
-The script creates a `docker-compose.yml` with your desired configuration and then starts the stack.
+- Then follow the instructions to install and confiure. Fast and Simple. Script creates a docker-compose.yml with your desired configuration, then displays **configs** and **QR-codes** to adding configs for mobile and desktop Shadowsocks client applications.
 
-### Use docker-compose directly
+- Then you must start the stack with command:
+```bash
+docker-compose up -d
+```
+or
+```bash
+docker-compose up
+```
+to see server logs output.
+
+- Scan QR-codes with mobile Shadowsocks app, and use one-line configs with desktop application.
+- The guide with QR codes shown in the server terminal is also saved in the ```CloakSocks.README``` file on your server so you don't lose it.
+- Enjoy your new cloaksocks server, now you're lurking in the shadows.
+
+## Use docker-compose directly
 In case you want to manually configure the `docker-compose` file, make sure to check the "Supported Variables" section first.
 Then simply edit and run `docker-compose-server.yaml`
 
@@ -32,39 +65,25 @@ Then simply edit and run `docker-compose-server.yaml`
 docker-compose -f docker-compose-server.yaml up -d
 ```
 
-### Use DockerHub or Dockerfile
-Both Cloak (2.6.0) and Shadowsocks (0.1.5) are both dockerized and available on `hub.docker.com`
+# User config management and Admin panel.
 
-Start Shadowsocks using:
+### Unrestricted users
+Just use one generated config for all users.
 
-```bash
-docker run -d --name ss-server -p 8399:8399 -e SERVER_PORT='8399' PASSWORD='pass' \
--v ssvol:/app --restart unless-stopped freddykrum/cloaksocks:ss-server
-```
-and then start the Cloak using:
-
-```bash
-docker run -d --name ck-server -p 443:443 -e BINDPORT='443' BYPASSUID='' PRIVATEKEY='' \
-ADMINUID='' -v ssvol:/app --restart unless-stopped freddykrum/cloaksocks:ck-server
-```
-Then you should create the Cloak Client config yourself using the Supported Variables. Which is NOT recommended. (Use the damn script!) <br />
-I might as well add a script to create the Client Configs separately but it's not available for now.
-
-### Build your own Images
-Well, if you're looking for a specific Cloak/Shadowsocks version, Use the Dockerfiles `cloak-server` & `shadowsocks-server` to compile and create the image.<br />
-
-Make sure to edit the `Dockerfiles` properly. Different app versions might need specific compiling configurations. <br />
-Better have a little knowledge in Docker before using this method.
-
-###  DIVE IN
-In case you hate all the methods listed above or want to contribute to the [project](https://github.com/TheOldGoldenFish/Cloaksocks), dive in and rip the code. Utilize it how ever you want.
+### Users subject to bandwidth and credit controls
+0. First make sure you have ```AdminUID``` generated and set in ```ckserver.json```, along with a path to ```userinfo.db``` in ```DatabasePath``` (Cloak will create this file in ```config``` folder for you if it didn't already exist).
+1. On a Linux, download ```ck-client``` from ```bin``` folder of your server and ```ckclient.json``` from ```config``` folder.
+2. To enter admin mode, on your client **use generated command string below qr-codes in your server output (which also saved in CloakSocks.README)**. Or run ```ck-client -s <IP of the server> -l <A local port> -a <AdminUID> -c <path-to-ckclient.json>```.
+3. Visit [https://cbeuw.github.io/Cloak-panel](https://cbeuw.github.io/Cloak-panel) (Note: this is a pure-js static site, there is no backend and all data entered into this site are processed between your browser and the Cloak API endpoint you specified. Alternatively you can download the repo at [https://github.com/cbeuw/Cloak-panel](https://github.com/cbeuw/Cloak-panel) and open ```index.html``` in a browser. No web server is required).
+4. Type in ```127.0.0.1:<shadowsocks port, you entered, through installation (default 8399)>``` as the API Base, and click ```List```.
+5. You can add in more users, each with unique settings, by clicking the ```+``` panel
 
 # Dockerfiles
 
 |File name| Description |
 |---|---|
 |Dockerfile-cloak-server| Alpine container with Cloak Server |
-|Dockerfile-shadowsocks-server| Alpine container with Golang ShadowSocks Server |
+|Dockerfile-shadowsocks-server| Alpine container with ShadowSocks-Rust Server |
 
 # Supported Variables
 
@@ -73,7 +92,7 @@ In case you hate all the methods listed above or want to contribute to the [proj
 | --- | --- | --- |
 | SERVER_IP | `0.0.0.0` | Application listening IP (`0.0.0.0` means `localhost` in Docker) |
 | SERVER_PORT | `8399` | Application listening Port |
-| ENCRYPTION | `AEAD_CHACHA20_POLY1305` | Shadowsocks Server encryption method (Better use the default value. Other Ciphers might not work.) | 
+| ENCRYPTION | `CHACHA20_IETF_POLY1305` | Shadowsocks Server encryption method (Better use the default value. Other Ciphers might not work.) | 
 | PASSWORD | `null` | Your password |
 
 ## Cloak Server
@@ -96,7 +115,7 @@ In case you hate all the methods listed above or want to contribute to the [proj
 | CLIENTUID | UID obtained in the previous table | UIDs that are authorised without any bandwidth or credit limit restrictions. |
 | PUBLICKEY | PubKey obtained in the previous table | Is the static curve25519 public key. |
 | SERVERNAME | `1.0.0.1` | domain you want to make your ISP or firewall think you are visiting. Better be the same value as REDIRADDR |
-| BROWSER | `chrome` | the browser you want to appear to be using. It's not relevant to the browser you are actually using. `chrome/firefox` |
+| BROWSER | `chrome` | the browser you want to appear to be using. It's not relevant to the browser you are actually using. `chrome/firefox/safari` |
 | BINDPORT | `443` | The port used by Cloak Server |
 | CONNECTIONNUM | `4` | amount of underlying TCP connections you want to use. |
 | ADMINUID | Admin UID obtained in the previous table | |
@@ -136,36 +155,35 @@ In case you hate all the methods listed above or want to contribute to the [proj
 
 `BrowserSig` is the browser you want to **appear** to be using. It's not relevant to the browser you are actually using. Currently, `chrome` and `firefox` are supported.
 
-# ShadowSocks Golang Configuration
-[Shadowsocks Manual - Offical Repo.](https://github.com/shadowsocks/go-shadowsocks2/blob/master/README.md)
+# ShadowSocks Rust Configuration
+[Shadowsocks-rust Manual - Offical Repo.](https://github.com/shadowsocks/shadowsocks-rust)
 
 ### Server
 
-Start a server listening on port 8488 using `AEAD_CHACHA20_POLY1305` AEAD cipher with password `your-password`.
+Start Shadowsocks client and server with:
 
 ```sh
-go-shadowsocks2 -s 'ss://AEAD_CHACHA20_POLY1305:your-password@:8488' -verbose
+sslocal -c config.json
+ssserver -c config.json
 ```
 
 
 ### Client
 
-Start a client connecting to the above server. The client listens on port 1080 for incoming SOCKS5 
-connections, and tunnels both UDP and TCP on port 8053 and port 8054 to 8.8.8.8:53 and 8.8.4.4:53 
-respectively. 
+Start local client with configuration file
 
 ```sh
-go-shadowsocks2 -c 'ss://AEAD_CHACHA20_POLY1305:your-password@[server_address]:8488' \
-    -verbose -socks :1080 -u -udptun :8053=8.8.8.8:53,:8054=8.8.4.4:53 \
-                             -tcptun :8053=8.8.8.8:53,:8054=8.8.4.4:53
+# Read local client configuration from file
+sslocal -c /path/to/shadowsocks.json
 ```
 
-Replace `[server_address]` with the server's public address.
-
-
 ## Fork
+This project is fork of [laphrog](https://github.com/laphrog/Cloaksocks) **cloaksocks** project, which based on a great works of: 
+[Andy Wang(cbeuw)](https://github.com/cbeuw/Cloak) and [huashaoli](https://github.com/huashaoli/cloak-shadowsocks-docker)
 
-This project is based on the great work of [Andy Wang(cbeuw)](https://github.com/cbeuw/Cloak) and [huashaoli](https://github.com/huashaoli/cloak-shadowsocks-docker).
+## Support me
+Your support will help me continue to improve and maintain this project.
 
-`Cloaksocks` and `cloak-shadowsocks-docker` are two different projects. Make sure to use the right documents when working with them.
+[![Bitcoin Donate Button**](https://img.shields.io/badge/BTC-btc?style=plastic&logo=bitcoin&logoColor=gray&label=Donate&labelColor=%2380cd32&color=lightgray)](bitcoin:3F6HtdX8DnrypFBJKQYZvTGSGhwKaBnuGo?label=donate%20btc%20to%20project%20owner&amp;amount=0.0002)
 
+BTC:```3F6HtdX8DnrypFBJKQYZvTGSGhwKaBnuGo```

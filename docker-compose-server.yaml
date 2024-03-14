@@ -1,45 +1,49 @@
 version: "3.7"
 services:
   cloak-server:
-    image: freddykrum/cloaksocks:ck-server
+    image: dbelkovsky/cloaksocks:ck-server
+    container_name: ck-server
     ports:
       - "$BINDPORT:$BINDPORT"
     environment:
-      LOCAL_IP:     $LOCAL_IP
-      LOCAL_PORT:   $LOCAL_PORT
-      METHOD:       shadowsocks
-      BYPASSUID:    $BYPASSUID
-      REDIRADDR:    $REDIRADDR
-      PRIVATEKEY:   $PRIVATEKEY
-      ADMINUID:     $ADMINUID
-      PUBLICKEY:    $PUBLICKEY
-      ENCRYPTION:   $ENCRYPTION
-      PASSWORD:     $PASSWORD
-      BINDPORT:     $BINDPORT
-      
+      LOCAL_IP: $LOCAL_IP
+      LOCAL_PORT: $LOCAL_PORT
+      METHOD: shadowsocks
+      BYPASSUID: $BYPASSUID
+      REDIRADDR: $REDIRADDR
+      PRIVATEKEY: $PRIVATEKEY
+      ADMINUID: $ADMINUID
+      PUBLICKEY: $PUBLICKEY
+      ENCRYPTION: $ENCRYPTION
+      PASSWORD: $PASSWORD
+      BINDPORT: $BINDPORT
+
     networks:
       - external
       - internal
     deploy:
       replicas: 1
       restart_policy:
-        condition: always
+        condition: on-failure
 
   shadowsocks-server:
-    image: freddykrum/cloaksocks:ss-server
+    image: ghcr.io/shadowsocks/ssserver-rust
+    container_name: ss-server
     ports:
       - "$LOCAL_PORT:$LOCAL_PORT"
     environment:
-      SERVER_IP:     0.0.0.0
-      SERVER_PORT:   $LOCAL_PORT
-      ENCRYPTION:    $ENCRYPTION
-      PASSWORD:      $PASSWORD
+      SERVER_IP: 0.0.0.0
+      SERVER_PORT: $LOCAL_PORT
+      ENCRYPTION: $ENCRYPTION
+      PASSWORD: $PASSWORD
+    volumes:
+      - ${PWD}/config/ssserver.conf:/etc/shadowsocks-rust/config.json
     networks:
       - internal
     deploy:
       replicas: 1
       restart_policy:
-        condition: always
+        condition: on-failure
 
 networks:
   external:
