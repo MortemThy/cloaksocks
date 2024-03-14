@@ -26,7 +26,8 @@ Cloak plugin support is not available for some operating systems, clients can co
 ![Docker Compose](https://img.shields.io/badge/Docker_Compose-Ready-brightgreen)
 ![Docker Build](https://img.shields.io/badge/Docker_Build-Automatic-brightgreen)
 
-![изображение](https://github.com/cloaksocks/cloaksocks-docker/assets/157986562/d7b437f0-547e-42e5-b68f-c852bef4a9e1)
+![cloaksocks2](https://github.com/cloaksocks/cloaksocks-docker/assets/157986562/70c765fd-e382-45ea-967b-79f1b79c9550)
+
 
 
 # How to utilize
