@@ -380,8 +380,8 @@ GenReadme(){
 	echo
 	echo "8. For use config management panel:"
 	echo 
-	echo "On your client, first download "ck-client" binary, and "ckclient.json", from server project's "bin" folder, then run:"
-	echo "ck-client -s $LOCAL_IP -l $LOCAL_PORT -a $ADMINUID -c ckclient.json"
+	echo "On your local linux machine, first download "ck-client" binary, and "ckclient.json", from server project's "bin" and "config" folders, then run:"
+	echo "./ck-client -s $LOCAL_IP -l $LOCAL_PORT -a $ADMINUID -c ckclient.json"
 	echo 
 	echo "Visit https://cbeuw.github.io/Cloak-panel where open admin panel 127.0.0.1:$LOCAL_PORT )."
 	echo "Add user config UIDs with desired configurations"
