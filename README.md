@@ -1,4 +1,4 @@
-# Cloaksocks-docker
+# Cloaksocks-docker -- Shadowsocks over Cloak in Docker.
 is a server-side Docker build designed to be installed on Linux servers. It combines the Shadowsocks server with the Cloak server to bypass web censorship, providing secure and anonymous Internet access by bypassing blockers and filters.
 
 **Cloaksocks-docker** simplifies Shadowsocks/Cloak usage with scripts and Dockerfiles, using two Docker containers:
