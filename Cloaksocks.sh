@@ -103,13 +103,13 @@ InstallDep(){
 }
 
 ChmodBin(){
-if [ -x bin/ck-server ]
-then
+	if [ -x bin/ck-server ]
+	then
 		QueryInfo
-else
+	else
 		chmod +x bin/ck-server
 		QueryInfo
-fi
+	fi
 }
 
 QueryInfo(){
@@ -169,13 +169,13 @@ ReadArgs(){
 	read -r -p "Select an Option or Enter AdminUID: " OPTIONS
 	case $OPTIONS in
 	1)
-			ADMINUID=$BYPASSUID;;
+		ADMINUID=$BYPASSUID;;
 	2)
-			ADMINUID=$(bin/ck-server -uid | cut -d" " -f4)
-			echo "Your AdminUID: $ADMINUID";;
+		ADMINUID=$(bin/ck-server -uid | cut -d" " -f4)
+		echo "Your AdminUID: $ADMINUID";;
 	*)
-			ADMINUID=$OPTIONS;;
-		esac
+		ADMINUID=$OPTIONS;;
+	esac
 	echo
 
 	echo "Enter Redirect Address: "
@@ -238,7 +238,7 @@ ReplaceArgs(){
 }
 
 GenSsConfig(){
-		echo '{
+	echo '{
 	"server": "0.0.0.0",
 	"server_port": $LOCAL_PORT,
 	"local_address": "0.0.0.0",
@@ -253,7 +253,7 @@ GenSsConfig(){
 }
 
 GenCkServerJson(){
-		echo '{
+	echo '{
   "ProxyBook": {
 	"shadowsocks": [
 	  "tcp",
@@ -282,7 +282,7 @@ GenCkServerJson(){
 }
 
 GenCkClientJson(){
-		echo '{
+	echo '{
   "Transport": "direct",
   "ProxyMethod": "shadowsocks",
   "EncryptionMethod": "plain",
