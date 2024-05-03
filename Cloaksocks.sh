@@ -1,116 +1,114 @@
 #!/bin/bash
 InstallDep(){
-    os_type=$(uname -s)
-    case "$os_type" in
-        Linux)
-            if [ -f /etc/lsb-release ]; then
-                # Ubuntu
-                apt list --installed 2> /dev/null| grep docker-ce
-                if [ $? -eq 1 ]; then
-                    apt-get update
-                    apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-                    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-                    echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-                    apt-get update
-                    apt-get install -y docker-ce docker-ce-cli containerd.io
-                    systemctl start docker
-                fi
+	os_type=$(uname -s)
+	case "$os_type" in
+		Linux)
+			if [ -f /etc/lsb-release ]; then
+				# Ubuntu
+				apt list --installed 2> /dev/null| grep docker-ce
+				if [ $? -eq 1 ]; then
+					apt-get update
+					apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+					curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+					echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+					apt-get update
+					apt-get install -y docker-ce docker-ce-cli containerd.io
+					systemctl start docker
+				fi
 
-                apt list --installed 2> /dev/null|grep "docker-compose/"
-                if [ $? -eq 1 ]; then
-                    curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" \
-                    -o /usr/local/bin/docker-compose
-                    chmod +x /usr/local/bin/docker-compose
-                fi
+				apt list --installed 2> /dev/null|grep "docker-compose/"
+				if [ $? -eq 1 ]; then
+					curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" \
+					-o /usr/local/bin/docker-compose
+					chmod +x /usr/local/bin/docker-compose
+				fi
 
-                apt list --installed 2> /dev/null| grep qrencode
-                if [ $? -eq 1 ]; then
-                    apt-get install -y qrencode
-                fi
-            elif [ -f /etc/arch-release ]; then
-                # Arch Linux
-                pacman -Qs docker > /dev/null
-                if [ $? -eq 1 ]; then
-                    pacman -Syu --noconfirm
-                    pacman -S --noconfirm docker
-                    systemctl start docker
-                fi
+				apt list --installed 2> /dev/null| grep qrencode
+				if [ $? -eq 1 ]; then
+					apt-get install -y qrencode
+				fi
+			elif [ -f /etc/arch-release ]; then
+				# Arch Linux
+				pacman -Qs docker > /dev/null
+				if [ $? -eq 1 ]; then
+					pacman -Syu --noconfirm
+					pacman -S --noconfirm docker
+					systemctl start docker
+				fi
 
-                pacman -Qs docker-compose > /dev/null
-                if [ $? -eq 1 ]; then
-                    pacman -S --noconfirm docker-compose
-                fi
+				pacman -Qs docker-compose > /dev/null
+				if [ $? -eq 1 ]; then
+					pacman -S --noconfirm docker-compose
+				fi
 
-                pacman -Qs qrencode > /dev/null
-                if [ $? -eq 1 ]; then
-                    pacman -S --noconfirm qrencode
-                fi
-            elif [ -f /etc/centos-release ]; then
-                # CentOS
-                rpm -qa | grep docker-ce > /dev/null
-                if [ $? -eq 1 ]; then
-                    yum install -y yum-utils
-                    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-                    yum install -y docker-ce docker-ce-cli containerd.io
-                    systemctl start docker
-                fi
+				pacman -Qs qrencode > /dev/null
+				if [ $? -eq 1 ]; then
+					pacman -S --noconfirm qrencode
+				fi
+			elif [ -f /etc/centos-release ]; then
+				# CentOS
+				rpm -qa | grep docker-ce > /dev/null
+				if [ $? -eq 1 ]; then
+					yum install -y yum-utils
+					yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+					yum install -y docker-ce docker-ce-cli containerd.io
+					systemctl start docker
+				fi
 
-                rpm -qa | grep docker-compose > /dev/null
-                if [ $? -eq 1 ]; then
-                    curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" \
-                    -o /usr/local/bin/docker-compose
-                    chmod +x /usr/local/bin/docker-compose
-                fi
+				rpm -qa | grep docker-compose > /dev/null
+				if [ $? -eq 1 ]; then
+					curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" \
+					-o /usr/local/bin/docker-compose
+					chmod +x /usr/local/bin/docker-compose
+				fi
 
-                rpm -qa | grep qrencode > /dev/null
-                if [ $? -eq 1 ]; then
-                    yum install -y qrencode
-                fi
-            elif [ -f /etc/debian_version ]; then
-                # Debian
-                apt list --installed 2> /dev/null| grep docker-ce
-                if [ $? -eq 1 ]; then
-                    apt-get update
-                    apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-                    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-                    echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-                    apt-get update
-                    apt-get install -y docker-ce docker-ce-cli containerd.io
-                    systemctl start docker
-                fi
+				rpm -qa | grep qrencode > /dev/null
+				if [ $? -eq 1 ]; then
+					yum install -y qrencode
+				fi
+			elif [ -f /etc/debian_version ]; then
+				# Debian
+				apt list --installed 2> /dev/null| grep docker-ce
+				if [ $? -eq 1 ]; then
+					apt-get update
+					apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+					curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+					echo "deb [signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+					apt-get update
+					apt-get install -y docker-ce docker-ce-cli containerd.io
+					systemctl start docker
+				fi
 
-                apt list --installed 2> /dev/null|grep "docker-compose/"
-                if [ $? -eq 1 ]; then
-                    curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" \
-                    -o /usr/local/bin/docker-compose
-                    chmod +x /usr/local/bin/docker-compose
-                fi
+				apt list --installed 2> /dev/null|grep "docker-compose/"
+				if [ $? -eq 1 ]; then
+					curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" \
+					-o /usr/local/bin/docker-compose
+					chmod +x /usr/local/bin/docker-compose
+				fi
 
-                apt list --installed 2> /dev/null| grep qrencode
-                if [ $? -eq 1 ]; then
-                    apt-get install -y qrencode
-                fi
-            else
-                echo "Unsupported Linux distribution."
-                exit 1
-            fi
-            ;;
-        *)
-            echo "Unsupported operating system."
-            exit 1
-            ;;
-    esac
-
-
+				apt list --installed 2> /dev/null| grep qrencode
+				if [ $? -eq 1 ]; then
+					apt-get install -y qrencode
+				fi
+			else
+				echo "Unsupported Linux distribution."
+				exit 1
+			fi
+			;;
+		*)
+			echo "Unsupported operating system."
+			exit 1
+			;;
+	esac
 }
 
 ChmodBin(){
 if [ -x bin/ck-server ]
 then
-        QueryInfo
+		QueryInfo
 else
-        chmod +x bin/ck-server
-        QueryInfo
+		chmod +x bin/ck-server
+		QueryInfo
 fi
 }
 
@@ -171,14 +169,14 @@ ReadArgs(){
 	read -r -p "Select an Option or Enter AdminUID: " OPTIONS
 	case $OPTIONS in
 	1)
-            ADMINUID=$BYPASSUID;;
+			ADMINUID=$BYPASSUID;;
 	2)
-            ADMINUID=$(bin/ck-server -uid | cut -d" " -f4)
-            echo "Your AdminUID: $ADMINUID";;
+			ADMINUID=$(bin/ck-server -uid | cut -d" " -f4)
+			echo "Your AdminUID: $ADMINUID";;
 	*)
-            ADMINUID=$OPTIONS;;
-    	esac
-    	echo
+			ADMINUID=$OPTIONS;;
+		esac
+	echo
 
 	echo "Enter Redirect Address: "
 	echo
@@ -240,13 +238,13 @@ ReplaceArgs(){
 }
 
 GenSsConfig(){
-        echo '{
-    "server": "0.0.0.0",
-    "server_port": $LOCAL_PORT,
-    "local_address": "0.0.0.0",
-    "password": "$PASSWORD",
-    "timeout": 300,
-    "method": "$ENCRYPTION"
+		echo '{
+	"server": "0.0.0.0",
+	"server_port": $LOCAL_PORT,
+	"local_address": "0.0.0.0",
+	"password": "$PASSWORD",
+	"timeout": 300,
+	"method": "$ENCRYPTION"
 }' > config/ssserver.conf
 
 	sed -i "s|\$LOCAL_PORT|${LOCAL_PORT}|g" config/ssserver.conf
@@ -255,19 +253,19 @@ GenSsConfig(){
 }
 
 GenCkServerJson(){
-        echo '{
+		echo '{
   "ProxyBook": {
-    "shadowsocks": [
-      "tcp",
-      "0.0.0.0:$LOCAL_PORT"
-    ]
+	"shadowsocks": [
+	  "tcp",
+	  "0.0.0.0:$LOCAL_PORT"
+	]
   },
   "BindAddr": [
-    ":$BINDPORT",
-    ":80"
+	":$BINDPORT",
+	":80"
   ],
   "BypassUID": [
-    "$BYPASSUID"
+	"$BYPASSUID"
   ],
   "RedirAddr": "$REDIRADDR",
   "PrivateKey": "$PRIVATEKEY",
@@ -284,7 +282,7 @@ GenCkServerJson(){
 }
 
 GenCkClientJson(){
-        echo '{
+		echo '{
   "Transport": "direct",
   "ProxyMethod": "shadowsocks",
   "EncryptionMethod": "plain",
@@ -304,24 +302,24 @@ GenCkClientJson(){
 }
 
 InitDB(){
-    local dir="db"
-    local file="userinfo.db"
+	local dir="db"
+	local file="userinfo.db"
 
-    if [ ! -d "$dir" ]; then
-        mkdir -p "$dir"  
-        echo "Database directory '$dir' created."
-    else
-        echo "Database directory '$dir' already exists."
-    fi
+	if [ ! -d "$dir" ]; then
+		mkdir -p "$dir"  
+		echo "Database directory '$dir' created."
+	else
+		echo "Database directory '$dir' already exists."
+	fi
 
-    cd "$dir" || return
+	cd "$dir" || return
 
-    if [ ! -f "$file" ]; then
-        touch "$file"  
-        echo "Database '$file' created. in '$dir'"
-    else
-        echo "File '$file' already exists in '$dir'."
-    fi
+	if [ ! -f "$file" ]; then
+		touch "$file"  
+		echo "Database '$file' created. in '$dir'"
+	else
+		echo "File '$file' already exists in '$dir'."
+	fi
 	cd ..
 }
 
