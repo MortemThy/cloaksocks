@@ -1,17 +1,6 @@
 #!/bin/bash
-clear
-echo
-echo
-echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓ c . L . o . A . k . S . o . C . k . S ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
-echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓                                       ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
-echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓   Shadowsocks over Cloak on docker    ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
-echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓                                       ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
-echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓ c . L . o . A . k . S . o . C . k . S ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
-echo
-
 InstallDep(){
     os_type=$(uname -s)
-
     case "$os_type" in
         Linux)
             if [ -f /etc/lsb-release ]; then
@@ -111,10 +100,21 @@ InstallDep(){
             exit 1
             ;;
     esac
+
+
+}
+
+ChmodBin(){
+if [ -x bin/ck-server ]
+then
+        QueryInfo
+else
+        chmod +x bin/ck-server
+        QueryInfo
+fi
 }
 
 QueryInfo(){
-
 	DefIP=$(curl -s https://ipecho.net/plain)
 	KEYPAIRS=$(bin/ck-server -key)
 	PrivateKey=$(echo $KEYPAIRS | cut -d" " -f13)
@@ -123,13 +123,20 @@ QueryInfo(){
 }
 
 ReadArgs(){
+	echo
+	echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓ c . L . o . A . k . S . o . C . k . S ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
+	echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓                                       ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
+	echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓   Shadowsocks over Cloak on docker    ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
+	echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓                                       ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
+	echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓ c . L . o . A . k . S . o . C . k . S ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
+	echo
+
 	read -e -p "Enter server IP Address or hostname: " -i "$DefIP" LOCAL_IP
 	read -e -p "Enter Shadowsocks Port: " -i "8399" LOCAL_PORT
 	read -e -p "Enter ByPassUID: " -i "$CloakUID" BYPASSUID
 	read -e -p "Enter PrivateKey: " -i "$PrivateKey" PRIVATEKEY
 	read -e -p "Enter PublicKey: " -i "$PublicKey" PUBLICKEY
 	echo
-
 
 	echo "Encryption methods: "
 	echo "1) aes-256-gcm"
@@ -147,17 +154,14 @@ ReadArgs(){
 	ENCRYPTION_LC=$(echo $ENCRYPTION | tr A-Z a-z)
 	echo
 
-
 	read -e -p "Enter Cloak Port (443 is strongly recommended): " -i "443" BINDPORT
-	stty -echo
+	stty echo
 	echo
-
 
 	read -p "Enter Password: " -i "" PASSWORD
 	stty echo
 	echo
 	echo
-
 
 	echo "Enter AdminUID (Optional): "
 	echo
@@ -175,7 +179,6 @@ ReadArgs(){
             ADMINUID=$OPTIONS;;
     	esac
     	echo
-
 
 	echo "Enter Redirect Address: "
 	echo
@@ -218,7 +221,7 @@ ReadArgs(){
 
 	echo "Set amount of TCP connections you want to use : "
 	read -e -p "Enter number: " -i "4" NUMCONN
-	stty -echo
+	stty echo
 	echo
 }
 
@@ -393,16 +396,10 @@ GenReadme(){
 	echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓ c . L . o . A . k . S . o . C . k . S ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
 }
 
-if [ -x bin/ck-server ]
-then
-        QueryInfo
-else
-        chmod +x bin/ck-server
-        QueryInfo
-fi
-
-ReadArgs
 InstallDep
+ChmodBin
+QueryInfo
+ReadArgs
 ReplaceArgs
 GenSsConfig
 GenCkServerJson
