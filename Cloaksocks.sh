@@ -136,19 +136,25 @@ ReadArgs(){
 	read -e -p "Enter PublicKey: " -i "$PublicKey" PUBLICKEY
 	echo
 
+	# Array of available encryption options
+	OPTIONS=("AES-256-GCM" "AES-128-GCM" "CHACHA20-IETF-POLY1305")
+
 	echo "Encryption methods: "
-	echo "1) aes-256-gcm"
-	echo "2) aes-128-gcm"
-	echo "3) chacha20-ietf-poly1305 (Recommended)"
-	read -e -p "Select Encryption method (CHACHA20-IETF-POLY1305 is the default value. Other ciphers might not work.): " -i "3" OPTIONS
-	case $OPTIONS in
-	1)
-		ENCRYPTION="AES-256-GCM";;
-	2)
-		ENCRYPTION="AES-128-GCM";;
-	3)
-		ENCRYPTION="CHACHA20-IETF-POLY1305";;
-	esac
+	for i in "${!OPTIONS[@]}"; do
+	    echo "$(($i+1))) ${OPTIONS[$i]}"
+	done
+
+	while true; do
+	    read -e -p "Select Encryption method (CHACHA20-IETF-POLY1305 is the default value. Other ciphers might not work.): " CHOICE
+	    if [[ $CHOICE -ge 1 && $CHOICE -le ${#OPTIONS[@]} ]]; then
+	        ENCRYPTION=${OPTIONS[$(($CHOICE-1))]}
+	        break
+	    else
+	        echo "Invalid input. Please enter a number between 1 and ${#OPTIONS[@]}."
+	    fi
+	done
+
+	# Convert encryption option to lowercase
 	ENCRYPTION_LC=$(echo $ENCRYPTION | tr A-Z a-z)
 	echo
 
@@ -244,7 +250,7 @@ GenSsConfig(){
 	"local_address": "0.0.0.0",
 	"password": "$PASSWORD",
 	"timeout": 300,
-	"method": "$ENCRYPTION"
+	"method": "$ENCRYPTION_LC"
 }' > config/ssserver.conf
 
 	sed -i "s|\$LOCAL_PORT|${LOCAL_PORT}|g" config/ssserver.conf
