@@ -286,7 +286,7 @@ GenCkClientJson(){
   "Transport": "direct",
   "ProxyMethod": "shadowsocks",
   "EncryptionMethod": "plain",
-  "UID": "$BYPASSUID"
+  "UID": "$BYPASSUID",
   "PublicKey": "$PUBLICKEY",
   "ServerName": "$REDIRADDR",
   "NumConn": $NUMCONN,
