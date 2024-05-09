@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# OS and distrib type detection and preinstall packages
 InstallDep(){
 	os_type=$(uname -s)
 	case "$os_type" in
@@ -129,6 +131,7 @@ ReadArgs(){
 	echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓ c . L . o . A . k . S . o . C . k . S ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
 	echo
 
+	# set cloak options
 	read -e -p "Enter server IP Address or hostname: " -i "$DefIP" LOCAL_IP
 	read -e -p "Enter Shadowsocks Port: " -i "8399" LOCAL_PORT
 	read -e -p "Enter ByPassUID: " -i "$CloakUID" BYPASSUID
@@ -136,8 +139,8 @@ ReadArgs(){
 	read -e -p "Enter PublicKey: " -i "$PublicKey" PUBLICKEY
 	echo
 
-	# Array of available encryption options
-	OPTIONS=("AES-256-GCM" "AES-128-GCM" "CHACHA20-IETF-POLY1305")
+	# set cloak encryption options
+	OPTIONS=("aes-256-gcm" "aes-128-gcm" "chacha20-ietf-poly1305")
 
 	echo "Encryption methods: "
 	for i in "${!OPTIONS[@]}"; do
@@ -145,7 +148,7 @@ ReadArgs(){
 	done
 
 	while true; do
-	    read -e -p "Select Encryption method (CHACHA20-IETF-POLY1305 is the default value. Other ciphers might not work.): " CHOICE
+	    read -e -p "Select Encryption method (chacha20-ietf-poly1305 is the default value. Other ciphers might not work.): " CHOICE
 	    if [[ $CHOICE -ge 1 && $CHOICE -le ${#OPTIONS[@]} ]]; then
 	        ENCRYPTION=${OPTIONS[$(($CHOICE-1))]}
 	        break
@@ -153,26 +156,26 @@ ReadArgs(){
 	        echo "Invalid input. Please enter a number between 1 and ${#OPTIONS[@]}."
 	    fi
 	done
-
-	# Convert encryption option to lowercase
-	ENCRYPTION_LC=$(echo $ENCRYPTION | tr A-Z a-z)
 	echo
 
+	# set cloak listening port 
 	read -e -p "Enter Cloak Port (443 is strongly recommended): " -i "443" BINDPORT
 	stty echo
 	echo
 
+	# shadowsocks password
 	read -p "Enter Password: " -i "" PASSWORD
 	stty echo
 	echo
 	echo
 
+	# set cloak AdminUID
 	echo "Enter AdminUID (Optional): "
 	echo
 	echo "1) UseByPassUID as AdminUID (Recommended)"
 	echo "2) Generate new UID and set it as AdminUID"
 	echo "3) Ignore"
-	read -r -p "Select an Option or Enter AdminUID: " OPTIONS
+	read -r -p "Select an Option or Enter AdminUID: " -i "1" OPTIONS
 	case $OPTIONS in
 	1)
 		ADMINUID=$BYPASSUID;;
@@ -184,51 +187,64 @@ ReadArgs(){
 	esac
 	echo
 
+    # set cloak spoofed redirect address
+	OPTIONS=("Cloudflare (1.0.0.1)" "www.bing.com" "www.google.com" "m.youtube.com")
+
 	echo "Enter Redirect Address: "
 	echo
-	echo "1) Cloudflare (1.0.0.1)"
-	echo "2) www.bing.com"
-	echo "3) www.google.com"
-	echo "4) m.youtube.com"
-	read -r -p "Select an Option or Enter an Address: " OPTIONS
 
-	case $OPTIONS in
-	1)
-		REDIRADDR=1.0.0.1;;
-	2)
-		REDIRADDR=www.bing.com;;
-	3)
-		REDIRADDR=www.google.com;;
-	4)
-		REDIRADDR=m.youtube.com;;
-	*)
-		REDIRADDR=$OPTIONS;;
-	esac
+	for ((i=0; i<${#OPTIONS[@]}; i++)); do
+	    echo "$((i+1))) ${OPTIONS[i]}"
+	done
+
+	while true; do
+	    read -r -p "Select an Option (1-${#OPTIONS[@]}) or Enter an Address: " -i "1" OPTION
+
+	    if [[ "$OPTION" =~ ^[1-${#OPTIONS[@]}]$ ]]; then
+	        REDIRADDR=${OPTIONS[OPTION-1]}
+	        break
+	    elif [[ -n "$OPTION" ]]; then
+	        REDIRADDR=$OPTION
+	        break
+	    else
+	        echo "Invalid Option. Please select 1-${#OPTIONS[@]} or enter an address."
+	    fi
+	done
 	echo
+
+	# set cloak spoofed browser signature
+	OPTIONS=("chrome" "firefox" "safari")
 
 	echo "Browser signature: "
 	echo
-	echo "1) chrome"
-	echo "2) firefox"
-	echo "3) safari"
-	read -r -p "Select Browser signature (is the browser you want to APPEAR to be using. It's not relevant to the browser you are actually using.): " OPTIONS
-	
-	case $OPTIONS in
-	1)
-		BROWSERSIG="chrome";;
-	2)
-		BROWSERSIG="firefox";;
-	3)
-		BROWSERSIG="safari";;
-	esac
+
+	for ((i=0; i<${#OPTIONS[@]}; i++)); do
+	    echo "$((i+1)) ${OPTIONS[i]}"
+	done
+
+	while true; do
+	    read -r -p "Select Browser signature (is the browser you want to APPEAR to be using. It's not relevant to the browser you are actually using.): " OPTION
+
+	    if [[ "$OPTION" =~ ^[1-${#OPTIONS[@]}]$ ]]; then
+	        BROWSERSIG=${OPTIONS[OPTION-1]}
+	        break
+	    elif [[ -n "$OPTION" ]]; then
+	        BROWSERSIG=$OPTION
+	        break
+	    else
+	        echo "Invalid Option. Please select 1-${#OPTIONS[@]} or enter a custom signature."
+	    fi
+	done
 	echo
 
+	# cloak amount of TCP connections
 	echo "Set amount of TCP connections you want to use : "
 	read -e -p "Enter number: " -i "4" NUMCONN
 	stty echo
 	echo
 }
 
+# generating docker-compose.yml
 ReplaceArgs(){
 	cp docker-compose-server.yaml docker-compose.yml
 	sed -i "s|\$LOCAL_IP|${LOCAL_IP}|" docker-compose.yml 
@@ -236,13 +252,14 @@ ReplaceArgs(){
 	sed -i "s|\$BYPASSUID|${BYPASSUID}|" docker-compose.yml
 	sed -i "s|\$PRIVATEKEY|${PRIVATEKEY}|" docker-compose.yml
 	sed -i "s|\$PUBLICKEY|${PUBLICKEY}|" docker-compose.yml
-	sed -i "s|\$ENCRYPTION|${ENCRYPTION_LC}|" docker-compose.yml
+	sed -i "s|\$ENCRYPTION|${ENCRYPTION}|" docker-compose.yml
 	sed -i "s|\$PASSWORD|${PASSWORD}|" docker-compose.yml
 	sed -i "s|\$ADMINUID|${ADMINUID}|" docker-compose.yml
 	sed -i "s|\$REDIRADDR|${REDIRADDR}|" docker-compose.yml
 	sed -i "s|\$BINDPORT|${BINDPORT}|g" docker-compose.yml
 }
 
+# generating ssserver.conf
 GenSsConfig(){
 	echo '{
 	"server": "0.0.0.0",
@@ -250,14 +267,15 @@ GenSsConfig(){
 	"local_address": "0.0.0.0",
 	"password": "$PASSWORD",
 	"timeout": 300,
-	"method": "$ENCRYPTION_LC"
+	"method": "$ENCRYPTION"
 }' > config/ssserver.conf
 
 	sed -i "s|\$LOCAL_PORT|${LOCAL_PORT}|g" config/ssserver.conf
 	sed -i "s|\$PASSWORD|${PASSWORD}|" config/ssserver.conf
-	sed -i "s|\$ENCRYPTION|${ENCRYPTION_LC}|" config/ssserver.conf
+	sed -i "s|\$ENCRYPTION|${ENCRYPTION}|" config/ssserver.conf
 }
 
+# generating ckserver.json
 GenCkServerJson(){
 	echo '{
   "ProxyBook": {
@@ -287,6 +305,7 @@ GenCkServerJson(){
 	sed -i "s|\$ADMINUID|${ADMINUID}|" config/ckserver.json
 }
 
+# generating ckclient.json
 GenCkClientJson(){
 	echo '{
   "Transport": "direct",
@@ -307,6 +326,7 @@ GenCkClientJson(){
 	sed -i "s|\$BROWSERSIG|${BROWSERSIG}|" config/ckclient.json
 }
 
+# create users database file for adminpanel
 InitDB(){
 	local dir="db"
 	local file="userinfo.db"
@@ -329,14 +349,16 @@ InitDB(){
 	cd ..
 }
 
+# generating client configs 
 ShowConnectionInfo(){
-	SERVER_BASE64=$(printf "%s" "$ENCRYPTION_LC:$PASSWORD" | base64)
+	SERVER_BASE64=$(printf "%s" "$ENCRYPTION:$PASSWORD" | base64)
 	SERVER_CLOAK_ARGS="ck-client;StreamTimeout=300;PublicKey=$PUBLICKEY;EncryptionMethod=plain;TicketTimeHint=3600;MaskBrowser=chrome;ProxyMethod=shadowsocks;UID=$BYPASSUID;CDNWsUrlPath=;AlternativeNames=;KeepAlive=0;ServerName=$REDIRADDR;BrowserSig=$BROWSERSIG;Transport=direct;CDNOriginHost=;NumConn=$NUMCONN"
 	SERVER_CLOAK_ARGS=$(printf "%s" "$SERVER_CLOAK_ARGS" | curl -Gso /dev/null -w %{url_effective} --data-urlencode @- "" | cut -c 3-)
 	SERVER_BASE64CK="ss://$SERVER_BASE64@$LOCAL_IP:$BINDPORT?plugin=$SERVER_CLOAK_ARGS#cloaksocks"
 	SERVER_BASE64SS="ss://$SERVER_BASE64@$LOCAL_IP:$LOCAL_PORT#shadowsocks"
 }
 
+# showing clients connection info, and save into CloakSocks.README
 GenReadme(){
 	echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓ c . L . o . A . k . S . o . C . k . S ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
 	echo "░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓                                       ▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░"
