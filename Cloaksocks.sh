@@ -223,7 +223,7 @@ ReadArgs(){
 	done
 
 	while true; do
-	    read -r -p "Select Browser signature (is the browser you want to APPEAR to be using. It's not relevant to the browser you are actually using.): " OPTION
+	    read -e -p "Select Browser signature (is the browser you want to APPEAR to be using. It's not relevant to the browser you are actually using.): " -i "1" OPTION
 
 	    if [[ "$OPTION" =~ ^[1-${#OPTIONS[@]}]$ ]]; then
 	        BROWSERSIG=${OPTIONS[OPTION-1]}
