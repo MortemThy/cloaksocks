@@ -140,7 +140,7 @@ ReadArgs(){
 	echo
 
 	# set cloak encryption options
-	OPTIONS=("aes-256-gcm" "aes-128-gcm" "chacha20-ietf-poly1305")
+	OPTIONS=("chacha20-ietf-poly1305" "aes-256-gcm" "aes-128-gcm")
 
 	echo "Encryption methods: "
 	for i in "${!OPTIONS[@]}"; do
@@ -148,7 +148,7 @@ ReadArgs(){
 	done
 
 	while true; do
-	    read -e -p "Select Encryption method (chacha20-ietf-poly1305 is the default value. Other ciphers might not work.): " CHOICE
+	    read -e -p "Select Encryption method (chacha20-ietf-poly1305 is the default value. Other ciphers might not work.): " -i "1" CHOICE
 	    if [[ $CHOICE -ge 1 && $CHOICE -le ${#OPTIONS[@]} ]]; then
 	        ENCRYPTION=${OPTIONS[$(($CHOICE-1))]}
 	        break
@@ -164,7 +164,7 @@ ReadArgs(){
 	echo
 
 	# shadowsocks password
-	read -p "Enter Password: " -i "" PASSWORD
+	read -p "Set password for shadowsocks client connection: " -i "" PASSWORD
 	stty echo
 	echo
 	echo
@@ -175,7 +175,7 @@ ReadArgs(){
 	echo "1) UseByPassUID as AdminUID (Recommended)"
 	echo "2) Generate new UID and set it as AdminUID"
 	echo "3) Ignore"
-	read -r -p "Select an Option or Enter AdminUID: " -i "1" OPTIONS
+	read -e -p "Select an Option or Enter AdminUID: " -i "1" OPTIONS
 	case $OPTIONS in
 	1)
 		ADMINUID=$BYPASSUID;;
@@ -198,7 +198,7 @@ ReadArgs(){
 	done
 
 	while true; do
-	    read -r -p "Select an Option (1-${#OPTIONS[@]}) or Enter an Address: " -i "1" OPTION
+	    read -e -p "Select an Option (1-${#OPTIONS[@]}) or Enter an Address: " -i "1" OPTION
 
 	    if [[ "$OPTION" =~ ^[1-${#OPTIONS[@]}]$ ]]; then
 	        REDIRADDR=${OPTIONS[OPTION-1]}
