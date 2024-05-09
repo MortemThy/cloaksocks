@@ -188,7 +188,7 @@ ReadArgs(){
 	echo
 
     # set cloak spoofed redirect address
-	OPTIONS=("Cloudflare (1.0.0.1)" "www.bing.com" "www.google.com" "m.youtube.com")
+	OPTIONS=("1.0.0.1" "www.bing.com" "www.google.com" "m.youtube.com")
 
 	echo "Enter Redirect Address: "
 	echo
