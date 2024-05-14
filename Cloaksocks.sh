@@ -132,14 +132,14 @@ ReadArgs(){
 	echo
 
 	# set cloak options
-	read -e -p "Enter server IP Address or hostname: " -i "$DefIP" LOCAL_IP
-	read -e -p "Enter Shadowsocks Port: " -i "8399" LOCAL_PORT
+	read -e -p "Enter server IP Address or (better) hostname: " -i "$DefIP" LOCAL_IP
+	read -e -p "Enter Shadowsocks Port, make sure that port is accesible from outside: " -i "8399" LOCAL_PORT
 	read -e -p "Enter ByPassUID: " -i "$CloakUID" BYPASSUID
 	read -e -p "Enter PrivateKey: " -i "$PrivateKey" PRIVATEKEY
 	read -e -p "Enter PublicKey: " -i "$PublicKey" PUBLICKEY
 	echo
 
-	# set cloak encryption options
+	# set shadowsocks encryption options
 	OPTIONS=("chacha20-ietf-poly1305" "aes-256-gcm" "aes-128-gcm")
 
 	echo "Encryption methods: "
@@ -159,7 +159,7 @@ ReadArgs(){
 	echo
 
 	# set cloak listening port 
-	read -e -p "Enter Cloak Port (443 is strongly recommended): " -i "443" BINDPORT
+	read -e -p "Enter Cloak Port (443 is strongly recommended), make sure that port is accesible from outside: " -i "443" BINDPORT
 	stty echo
 	echo
 
