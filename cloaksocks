@@ -1,7 +1,9 @@
-# Cloaksocks-docker -- Shadowsocks over Cloak in Docker.
-is a server-side Docker build designed to be installed on Linux servers. It combines the Shadowsocks server with the Cloak server to bypass web censorship, providing secure and anonymous Internet access by bypassing blockers and filters.
+# cloaksocks -- Shadowsocks over Cloak in Docker.
+- это серверная Docker сборка из двух контейнеров - Shadowsocks и Cloak, установочного скрипта и файлов конфигурации. Проект разработан для установки на Linux-серверы за пределами цензуры, для доступа к web, в обход блокировок и фильтров с клиентских устройств, базирующихся на всех основных операционных системах.
 
-**Cloaksocks-docker** simplifies Shadowsocks/Cloak usage with scripts and Dockerfiles, using two Docker containers:
+- is a server-side Docker build of two containers - Shadowsocks and Cloak, installation script and configuration files. The project is designed to be installed on Linux servers outside of censorship, to access the web, bypassing blocking and filters from client devices based on all major operating systems.
+
+**cloaksocks** simplifies Shadowsocks/Cloak usage with scripts and Dockerfiles, using two Docker containers:
 
 - **Shadowsocks**: A high-speed tunnel proxy facilitating firewall circumvention.
 - **Cloak**: A versatile pluggable transport encrypting proxy traffic to mimic legitimate HTTPS traffic, camouflaging the proxy server as a regular web server. It multiplexes traffic through a fixed TCP connection pool and offers multi-user usage control.
@@ -26,7 +28,7 @@ Cloak plugin support is not available for some operating systems, clients can co
 ![Docker Compose](https://img.shields.io/badge/Docker_Compose-Ready-brightgreen)
 ![Docker Build](https://img.shields.io/badge/Docker_Build-Automatic-brightgreen)
 
-![cloaksocks2](https://github.com/cloaksocks/cloaksocks-docker/assets/157986562/70c765fd-e382-45ea-967b-79f1b79c9550)
+![cloaksocks2](https://github.com/cloaksocks/cloaksocks/assets/157986562/70c765fd-e382-45ea-967b-79f1b79c9550)
 
 
 
@@ -36,8 +38,8 @@ Cloak plugin support is not available for some operating systems, clients can co
 Using `Cloaksocks.sh` is the recommended action:
 
 ```bash
-git clone https://github.com/cloaksocks/cloaksocks-docker
-cd cloaksocks-docker
+git clone https://github.com/cloaksocks/cloaksocks
+cd cloaksocks
 chmod +x Cloaksocks.sh
 sudo ./Cloaksocks.sh
 ```
