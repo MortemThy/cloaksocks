@@ -1,7 +1,9 @@
 version: "3.7"
 services:
   cloak-server:
-    image: dbelkovsky/cloaksocks:ck-server
+    build:
+      context: .
+      dockerfile: Dockerfile-cloak-server
     container_name: ck-server
     ports:
       - "$BINDPORT:$BINDPORT"

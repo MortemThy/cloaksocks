@@ -1,6 +1,4 @@
 # cloaksocks -- Shadowsocks over Cloak in Docker.
-- это серверная Docker сборка из двух контейнеров - Shadowsocks и Cloak, установочного скрипта и файлов конфигурации. Проект разработан для установки на Linux-серверы за пределами цензуры, для доступа к web, в обход блокировок и фильтров с клиентских устройств, базирующихся на всех основных операционных системах.
-
 - is a server-side Docker build of two containers - Shadowsocks and Cloak, installation script and configuration files. The project is designed to be installed on Linux servers outside of censorship, to access the web, bypassing blocking and filters from client devices based on all major operating systems.
 
 **cloaksocks** simplifies Shadowsocks/Cloak usage with scripts and Dockerfiles, using two Docker containers:
@@ -181,12 +179,6 @@ sslocal -c /path/to/shadowsocks.json
 ```
 
 ## Fork
-This project is fork of [laphrog](https://github.com/laphrog/Cloaksocks) **cloaksocks** project, which based on a great works of: 
+This project is fork of [cloaksocks](https://github.com/cloaksocks/cloaksocks)'s fork of [laphrog](https://github.com/laphrog/Cloaksocks) **cloaksocks** project, which in turn is based on great works of: 
 [Andy Wang(cbeuw)](https://github.com/cbeuw/Cloak) and [huashaoli](https://github.com/huashaoli/cloak-shadowsocks-docker)
 
-## Support me
-Your support will help me continue to improve and maintain this project.
-
-[![Bitcoin Donate Button**](https://img.shields.io/badge/BTC-btc?style=plastic&logo=bitcoin&logoColor=gray&label=Donate&labelColor=%2380cd32&color=lightgray)](bitcoin:3F6HtdX8DnrypFBJKQYZvTGSGhwKaBnuGo?label=donate%20btc%20to%20project%20owner&amp;amount=0.0002)
-
-BTC:```3F6HtdX8DnrypFBJKQYZvTGSGhwKaBnuGo```
