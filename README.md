@@ -183,10 +183,3 @@ sslocal -c /path/to/shadowsocks.json
 ## Fork
 This project is fork of [laphrog](https://github.com/laphrog/Cloaksocks) **cloaksocks** project, which based on a great works of: 
 [Andy Wang(cbeuw)](https://github.com/cbeuw/Cloak) and [huashaoli](https://github.com/huashaoli/cloak-shadowsocks-docker)
-
-## Support me
-Your support will help me continue to improve and maintain this project.
-
-[![Bitcoin Donate Button**](https://img.shields.io/badge/BTC-btc?style=plastic&logo=bitcoin&logoColor=gray&label=Donate&labelColor=%2380cd32&color=lightgray)](bitcoin:3F6HtdX8DnrypFBJKQYZvTGSGhwKaBnuGo?label=donate%20btc%20to%20project%20owner&amp;amount=0.0002)
-
-BTC:```3F6HtdX8DnrypFBJKQYZvTGSGhwKaBnuGo```
