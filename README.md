@@ -1,7 +1,7 @@
 # cloaksocks -- Shadowsocks over Cloak in Docker.
-- это серверная Docker сборка из двух контейнеров - Shadowsocks и Cloak, установочного скрипта и файлов конфигурации. Проект разработан для установки на Linux-серверы за пределами цензуры, для доступа к web, в обход блокировок и фильтров с клиентских устройств, базирующихся на всех основных операционных системах.
+- Это серверная Docker-сборка из двух контейнеров — Shadowsocks и Cloak, установочного скрипта и файлов конфигурации. Проект разработан для установки на Linux-серверы за пределами цензуры, для доступа к web в обход блокировок и фильтров с клиентских устройств, базирующихся на всех основных операционных системах.
 
-- is a server-side Docker build of two containers - Shadowsocks and Cloak, installation script and configuration files. The project is designed to be installed on Linux servers outside of censorship, to access the web, bypassing blocking and filters from client devices based on all major operating systems.
+- It is a server-side Docker build of two containers — Shadowsocks and Cloak, installation script, and configuration files. The project is designed to be installed on Linux servers outside of censorship to access the web, bypassing blocking and filters from client devices, based on all major operating systems.
 
 **cloaksocks** simplifies Shadowsocks/Cloak usage with scripts and Dockerfiles, using two Docker containers:
 
